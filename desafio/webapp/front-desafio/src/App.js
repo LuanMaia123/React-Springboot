@@ -1,13 +1,38 @@
 import React from 'react';
 import logo from './vibelogo.png';
 import './App.css';
+import { Container, Row, Col } from 'react-bootstrap';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+
+import NavigationBar from './components/NavigationBar';
+import Welcome from './components/welcome';
+import Footer from './components/Footer';
+import DeputadosList from './components/DeputadosList';
 
 function App() {
+  const marginTop = {
+    marginTop: "20px"
+  }
   return (
-    <div className="App">
-        <img src={logo}  alt="logo" />
+    <Router>
+      <NavigationBar />
+      <div style={{ textAlign: 'center' }}>
+        <img src={logo} alt="logo" />
         <h3>Desafio Vibe Tecnologia</h3>
-    </div>
+      </div>
+      <Container style={{ textAlign: 'center' }}>
+        <Row>
+          <Col lg={12} style={marginTop}>
+            <Switch>
+              <Route path="/" exact component={Welcome} />
+              <Route path="/DeputadosList" exact component={DeputadosList} />
+            </Switch>
+          </Col>
+        </Row>
+        <Footer />
+      </Container>
+    </Router>
   );
 }
 
