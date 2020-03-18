@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './vibelogo.png';
 import './App.css';
 import { Container, Row, Col } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -16,11 +15,7 @@ function App() {
   }
   return (
     <Router>
-      <NavigationBar />
-      <div style={{ textAlign: 'center' }}>
-        <img src={logo} alt="logo" />
-        <h3>Desafio Vibe Tecnologia</h3>
-      </div>
+      <NavigationBar />      
       <Container style={{ textAlign: 'center' }}>
         <Row>
           <Col lg={12} style={marginTop}>
