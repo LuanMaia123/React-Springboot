@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ServicoDeputados {
 
-    List<RecursoDeputado> obterTodosDeputados();
+    List<RecursoDeputado> obterTodosDeputados(Integer paginaAtual, Integer itensPorPagina);
 }

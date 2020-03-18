@@ -19,8 +19,8 @@ public class DeputadosController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("teste")
-    public ResponseEntity<List<RecursoDeputado>> getDeputados() {
-        return new ResponseEntity<>(servico.obterTodosDeputados(), HttpStatus.OK);
+    public ResponseEntity<List<RecursoDeputado>> getDeputados( @RequestParam(value = "paginaAtual") Integer paginaAtual, @RequestParam(value = "itensPorPagina") Integer itensPorPagina) {
+        return new ResponseEntity<>(servico.obterTodosDeputados(paginaAtual, itensPorPagina), HttpStatus.OK);
     }
 
 }
