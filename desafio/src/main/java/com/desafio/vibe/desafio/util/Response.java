@@ -36,7 +36,7 @@ public class Response<T> {
                 .add(new MappingJackson2HttpMessageConverter());
 
         try {
-            ResponseEntity<T> exchange = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, objeto);
+            ResponseEntity<T> exchange = restTemplate.exchange(builder.build().toString(), HttpMethod.GET, null, objeto);
             return exchange.getBody();
         } catch (Exception e) {
             LOG.severe(e.getMessage());

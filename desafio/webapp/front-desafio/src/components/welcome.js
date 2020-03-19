@@ -25,6 +25,7 @@ export default class Welcome extends Component {
                                 <li>React Fontawesome</li>
                                 <li>Java</li>
                                 <li>Maven</li>
+                                <li>Postgresql</li>
                             </ul>
                         </div>
                 </Jumbotron>
