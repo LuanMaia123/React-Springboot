@@ -2,13 +2,13 @@ package com.desafio.vibe.desafio.aplicacao;
 
 import com.desafio.vibe.desafio.api.recursos.RecursoDeputado;
 import com.desafio.vibe.desafio.api.recursos.RecursosDeputados;
-import com.desafio.vibe.desafio.servicos.ServicoDeputados;
-import com.desafio.vibe.desafio.util.VariaveisAplicacao;
+import com.desafio.vibe.desafio.dominio.Visualizacoes;
+import com.desafio.vibe.desafio.dominio.dados.RepositorioVisualizacoes;
+import com.desafio.vibe.desafio.dominio.servicos.ServicoDeputados;
+import com.desafio.vibe.desafio.util.Response;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -18,27 +18,36 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ServicoDeputadosImpl implements ServicoDeputados {
 
-    private VariaveisAplicacao variaveisAplicacao;
+
+    private RepositorioVisualizacoes repositorioVisualizacoes;
+
+    private Response<RecursosDeputados> response;
+
+    private final String ORDENACAO_ASC = "ASC";
 
     @Override
     public List<RecursoDeputado> obterTodosDeputados(Integer paginaAtual, Integer itensPorPagina) {
-        RestTemplate restTemplate = new RestTemplate();
+
         List<RecursoDeputado> deputadoList = new ArrayList<>();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(variaveisAplicacao.getUrlApiDeputados())
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://dadosabertos.camara.leg.br/api/v2/deputados")
                 .queryParam("pagina", paginaAtual)
                 .queryParam("itens", itensPorPagina)
-                .queryParam("ordem", "ASC");
+                .queryParam("ordem", ORDENACAO_ASC);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-        ResponseEntity<RecursosDeputados> respose = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, RecursosDeputados.class);
-        RecursosDeputados body = respose.getBody();
-        if (body != null) {
-            deputadoList = body.getDados();
+        RecursosDeputados recursosDeputados = response.requestParamsBuilder(builder, RecursosDeputados.class);
+        if (recursosDeputados != null) {
+            deputadoList = recursosDeputados.getDados();
+            populaVisualizacoes(deputadoList);
         }
+
         return deputadoList;
+    }
+
+    private void populaVisualizacoes(List<RecursoDeputado> deputadoList) {
+        deputadoList.forEach(d -> {
+            Visualizacoes visualizacoesPorParlamentar = repositorioVisualizacoes.getVisualizacoesPorParlamentar(Long.valueOf(d.getId()));
+            d.setVisualizacoes(visualizacoesPorParlamentar != null ? visualizacoesPorParlamentar.getVisualizacoes() : 0);
+        });
     }
 }

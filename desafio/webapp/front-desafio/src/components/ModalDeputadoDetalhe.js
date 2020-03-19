@@ -38,6 +38,7 @@ export default class ModalDeputadoDetalhe extends Component {
                 })
             })
     }
+    
 
     render() {
         moment.locale('pt-BR');

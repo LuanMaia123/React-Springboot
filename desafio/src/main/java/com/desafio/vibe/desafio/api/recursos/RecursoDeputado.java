@@ -28,5 +28,7 @@ public class RecursoDeputado implements Serializable {
     private String uriPartido;
     @JsonProperty("urlFoto")
     private String urlFoto;
+    @JsonProperty("visualizacoes")
+    private Integer visualizacoes;
 
 }

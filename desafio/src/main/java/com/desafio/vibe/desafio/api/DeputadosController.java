@@ -1,15 +1,16 @@
 package com.desafio.vibe.desafio.api;
 
 import com.desafio.vibe.desafio.api.recursos.*;
-import com.desafio.vibe.desafio.servicos.ServicoDeputados;
+import com.desafio.vibe.desafio.dominio.Visualizacoes;
+import com.desafio.vibe.desafio.dominio.dados.RepositorioVisualizacoes;
+import com.desafio.vibe.desafio.dominio.servicos.ServicoDeputados;
 import com.desafio.vibe.desafio.util.Response;
+import com.desafio.vibe.desafio.util.VariaveisAplicacao;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
@@ -25,7 +26,13 @@ public class DeputadosController {
 
     private ServicoDeputados servico;
 
-    private Response<RecursoDadosDespesa> response;
+    private Response<RecursoDadosDespesa> responseDespesa;
+
+    private Response<RecursoDetalhe> responseDetalhe;
+
+    private RepositorioVisualizacoes repositorioVisualizacoes;
+
+    private VariaveisAplicacao variaveisAplicacao;
 
     @GetMapping("/lista")
     public ResponseEntity<List<RecursoDeputado>> getDeputados(@RequestParam(value = "paginaAtual") Integer paginaAtual, @RequestParam(value = "itensPorPagina") Integer itensPorPagina) {
@@ -34,29 +41,40 @@ public class DeputadosController {
 
     @GetMapping("/detalhe")
     public ResponseEntity<RecursoDeputadoDetalhe> getDetalheDeputado(@RequestParam(value = "deputadoId") String deputadoId) {
-        RestTemplate restTemplate = new RestTemplate();
+
         RecursoDeputadoDetalhe recursoDeputadoDetalhe = null;
-        ResponseEntity<RecursoDetalhe> responseDetalhe = restTemplate.exchange("https://dadosabertos.camara.leg.br/api/v2/deputados/{id}", HttpMethod.GET, null, RecursoDetalhe.class, deputadoId);
-        RecursoDetalhe body = responseDetalhe.getBody();
-        if (body != null) {
-            recursoDeputadoDetalhe = body.getRecursoDeputadoDetalhe();
+        UriComponentsBuilder detalheBuilder = UriComponentsBuilder.fromHttpUrl(variaveisAplicacao.getUrlDetalheDeputado())
+                .queryParam("id", deputadoId);
+        RecursoDetalhe recursoDetalhe = responseDetalhe.requestParamsBuilder(detalheBuilder, RecursoDetalhe.class);
+
+        if (recursoDetalhe != null) {
+            recursoDeputadoDetalhe = recursoDetalhe.getRecursoDeputadoDetalhe();
 
             Map<String, String> urlParams = new HashMap<>();
             urlParams.put("id", deputadoId);
 
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://dadosabertos.camara.leg.br/api/v2/deputados/{id}/despesas")
+            UriComponentsBuilder despesasbuilder = UriComponentsBuilder.fromHttpUrl(variaveisAplicacao.getUrlDespesas())
                     .queryParam("ano", getAnoAtual())
                     .queryParam("mes", getMesAtual())
                     .queryParam("mes", getMesAnterior())
                     .queryParam("ordem", "ASC")
                     .queryParam("ordenarPor", "dataDocumento");
 
-            RecursoDadosDespesa recursoDespesa = response.requestParamsBuilder(urlParams, builder, RecursoDadosDespesa.class);
+            RecursoDadosDespesa recursoDespesa = responseDespesa.requestParamsBuilder(urlParams, despesasbuilder, RecursoDadosDespesa.class);
             if (recursoDespesa != null && !recursoDespesa.getDespesas().isEmpty()) {
                 recursoDeputadoDetalhe.setDespesas(agruparDespesas(recursoDespesa));
             }
         }
-
+        Visualizacoes visualizacoesPorParlamentar = repositorioVisualizacoes.getVisualizacoesPorParlamentar(Long.valueOf(deputadoId));
+        if (visualizacoesPorParlamentar != null) {
+            visualizacoesPorParlamentar.setVisualizacoes(visualizacoesPorParlamentar.getVisualizacoes() + 1);
+            repositorioVisualizacoes.save(visualizacoesPorParlamentar);
+        } else {
+            visualizacoesPorParlamentar = new Visualizacoes();
+            visualizacoesPorParlamentar.setIdParlamentar(Long.valueOf(deputadoId));
+            visualizacoesPorParlamentar.setVisualizacoes(1);
+            repositorioVisualizacoes.save(visualizacoesPorParlamentar);
+        }
         return new ResponseEntity<>(recursoDeputadoDetalhe, HttpStatus.OK);
     }
 

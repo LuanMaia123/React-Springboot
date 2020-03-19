@@ -1,4 +1,4 @@
-package com.desafio.vibe.desafio.servicos;
+package com.desafio.vibe.desafio.dominio.servicos;
 
 import com.desafio.vibe.desafio.api.recursos.RecursoDeputado;
 

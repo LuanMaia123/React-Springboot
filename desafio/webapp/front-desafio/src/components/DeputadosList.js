@@ -56,7 +56,9 @@ export default class DeputadosList extends Component {
 
     render() {
         const { parlamentares, paginaAtual } = this.state;
-        let modalDeputadoClose = () => this.setState({ modalDeputadoShow: false })
+        let modalDeputadoClose = () => this.setState({ modalDeputadoShow: false },() => {
+            this.obterTodosDeputadosPaginado(this.state.paginaAtual);
+          })
 
         return (
             <Card style={{ marginBottom: '8rem' }} className="border border-dark bg-dark text-white">
@@ -83,7 +85,7 @@ export default class DeputadosList extends Component {
                                             <td>{parlamentar.nome}</td>
                                             <td>{parlamentar.siglaPartido}</td>
                                             <td>{parlamentar.siglaUf}</td>
-                                            <td>{parlamentar.id}</td>
+                                            <td>{parlamentar.visualizacoes}</td>
                                             <td>
                                                 <ButtonGroup>
                                                     <Button
