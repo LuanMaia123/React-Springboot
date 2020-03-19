@@ -34,8 +34,8 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
                 .queryParam("ordem", "ASC");
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
-        ResponseEntity<RecursosDeputados> rateResponse = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, RecursosDeputados.class);
-        RecursosDeputados body = rateResponse.getBody();
+        ResponseEntity<RecursosDeputados> respose = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, RecursosDeputados.class);
+        RecursosDeputados body = respose.getBody();
         if (body != null) {
             deputadoList = body.getDados();
         }

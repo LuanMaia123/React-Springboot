@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Card, Table, ButtonGroup, Button, FormControl, InputGroup } from 'react-bootstrap';
+import { Card, Table, ButtonGroup, Button, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faEye, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import ModalDeputadoDetalhe from './ModalDeputadoDetalhe';
+
 
 
 export default class DeputadosList extends Component {
@@ -12,7 +14,8 @@ export default class DeputadosList extends Component {
         this.state = {
             parlamentares: [],
             paginaAtual: 1,
-            itensPorPagina: 5
+            itensPorPagina: 5,
+            modalDeputadoShow: false
         };
     }
 
@@ -20,10 +23,10 @@ export default class DeputadosList extends Component {
         this.obterTodosDeputadosPaginado(this.state.paginaAtual);
     }
 
-    obterTodosDeputadosPaginado(teste) {
-        axios.get("http://localhost:8080/rest/teste", {
+    obterTodosDeputadosPaginado(pagina) {
+        axios.get("http://localhost:8080/rest/deputados/lista", {
             params: {
-                paginaAtual: teste,
+                paginaAtual: pagina,
                 itensPorPagina: 5
             }
         })
@@ -52,10 +55,11 @@ export default class DeputadosList extends Component {
     };
 
     render() {
-        const { parlamentares, paginaAtual, itensPorPagina } = this.state;
+        const { parlamentares, paginaAtual } = this.state;
+        let modalDeputadoClose = () => this.setState({ modalDeputadoShow: false })
 
         return (
-            <Card className="border border-dark bg-dark text-white">
+            <Card style={{ marginBottom: '8rem' }} className="border border-dark bg-dark text-white">
                 <Card.Header style={{ textAlign: 'left' }}><FontAwesomeIcon icon={faList} /> Lista de Parlamentares</Card.Header>
                 <Card.Body>
                     <Table bordered striped hover variant="dark">
@@ -82,12 +86,26 @@ export default class DeputadosList extends Component {
                                             <td>{parlamentar.id}</td>
                                             <td>
                                                 <ButtonGroup>
-                                                    <Button size="sm" variant="outline-primary" title="Detalhar"><FontAwesomeIcon icon={faEye} /></Button>
+                                                    <Button
+                                                        onClick={() => this.setState({ modalDeputadoShow: true, id: parlamentar.id })}
+                                                        size="sm"
+                                                        variant="outline-primary"
+                                                        title="Detalhar">
+                                                        <FontAwesomeIcon icon={faEye} />
+                                                    </Button>
                                                 </ButtonGroup>
                                             </td>
+
                                         </tr>
                                     ))
+
                             }
+                            {this.state.modalDeputadoShow &&
+                                <ModalDeputadoDetalhe
+                                    show={this.state.modalDeputadoShow}
+                                    onHide={modalDeputadoClose}
+                                    deputadoid={this.state.id}
+                                />}
 
                         </tbody>
                     </Table>
