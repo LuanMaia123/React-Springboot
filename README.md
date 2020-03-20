@@ -1,6 +1,6 @@
-### Desafio vibe tecnologia
+# Desafio vibe tecnologia
 
-# Tecnologias ultilizadas
+### Tecnologias ultilizadas
 - Spring Boot 2
 - Project Lombok
 - ReactJs
@@ -15,7 +15,7 @@ Olá, obrigado pela oportunidade de mostrar um pouco do meu conhecimento.
 Essa aplicação, é um desafio proposto pela Vibe Tecnologia, mas vai além disso, pois, eu me dafiei também.
 Nessa aplicação eu usei a tecnologia ReactJs para fazer as telas, eu comecei a estudar ReactJS dia 12 desse mês e resolvi aplicar o que estou estudando neste desafio, estou acompanhando o curso da RocketSeat, e até o momento é um curso muito bom. Apliquei os conhecimentos que tinha e fui a traz dos que eu não tinha para fazer o front-end da aplicação nessa tecnologia, ainda estou estudando, então é provável que daqui a uma semana eu veja muita coisa que fiz e que posso melhorar.
 
-### Como executar
+# Como executar
 
 ## Postgres:
 Criar um banco local seguindo esses dados:
@@ -38,7 +38,7 @@ No terminal deve-se ir até a pasta webapp\front-desafio do projeto e rodar os s
 - Rodar o comando npm install.
 - Rodar o comando npm start.
 
-O que poderia ter sido feito a mais:
+## O que poderia ter sido feito a mais:
 
 - Docker compose para subir tudo de forma automática.
 - Migrations para criação da tabela de visualizações.
