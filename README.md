@@ -18,13 +18,13 @@ Nessa aplicação eu usei a tecnologia ReactJs para fazer as telas, eu comecei a
 ### Como executar
 
 ## Postgres:
-Criar um banco localhost seguindo esses dados:
+Criar um banco local seguindo esses dados:
 - Host:localhost
 - Database:postgres
 - username=postgres
 - password=admin
 
-No application.properties foi deixado o dll como update para criação da tabela. Vale ressaltar que para uma aplicação em produção isso não deve ser usado, normalmente qualquer coisa feita no banco é na mão, ou com migrations como Flyway.
+No application.properties foi deixado o dll como update para criação da tabela. Vale ressaltar que para uma aplicação em produção isso não deve ser usado, normalmente qualquer coisa feita no banco é na mão, ou com migrations como Flyway. Aqui para este desafio mantive desta forma para facilitar os testes.
 
 ## Eclipse ou Intellij:
 - Importar o projeto maven.
