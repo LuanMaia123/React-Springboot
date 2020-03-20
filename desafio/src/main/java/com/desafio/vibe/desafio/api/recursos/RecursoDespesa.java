@@ -12,6 +12,8 @@ public class RecursoDespesa implements Serializable {
 
     @JsonProperty("mes")
     public Integer mes;
+    @JsonProperty("mesNome")
+    public String mesNome;
     @JsonProperty("tipoDespesa")
     public String tipoDespesa;
     @JsonProperty("tipoDocumento")

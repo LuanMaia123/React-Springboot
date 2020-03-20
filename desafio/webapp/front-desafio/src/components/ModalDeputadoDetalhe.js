@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import CurrencyFormat from 'react-currency-format';
-import { Modal, Button, Form, Row, Col, Image, Card, Table } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { Modal, Button, Form, Row, Col, Image } from 'react-bootstrap';
 import axios from 'axios';
 import moment from 'moment';
-import DespesasDetalhadas from './DespesasDetalhadas'
 import DespesasAgrupadas from './DespesasAgrupadas';
 
 export default class ModalDeputadoDetalhe extends Component {
@@ -46,14 +42,10 @@ export default class ModalDeputadoDetalhe extends Component {
 
     render() {
         moment.locale('pt-BR');
+        const deputadoId = this.props.deputadoid;
         const { nomeCivil, dataNascimento, sexo, siglaPartido, urlFoto, despesas, detalhesDespesas } = this.state;
         const total = despesas && despesas.reduce(function (cnt, o) { return cnt + o.valorLiquido; }, 0)
-        let mostrarDetalhe = () => this.setState({ detalhesDespesas: true }, () => {
-            this.obterDetalheDeputado(this.props.deputadoid, true);
-        })
-        let naoMostrarDetalhe = () => this.setState({ detalhesDespesas: false }, () => {
-            this.obterDetalheDeputado(this.props.deputadoid, false);
-        })
+        let mostrarDetalhe = () => this.setState({ detalhesDespesas: true })
         return (
             <Modal
                 {...this.props}
@@ -78,7 +70,7 @@ export default class ModalDeputadoDetalhe extends Component {
                                 <Form.Label column sm="2">Sexo:</Form.Label>
                                 <Form.Label column sm="10">{sexo ? sexo === "M" ? "Masculino" : "Feminino" : ""}</Form.Label>
                                 <Form.Label column sm="2">Data de Nascimento:</Form.Label>
-                                <Form.Label column sm="10">{dataNascimento ? moment(dataNascimento).format('MM/DD/YYYY') : ""}</Form.Label>
+                                <Form.Label column sm="10">{dataNascimento ? moment(dataNascimento).format('DD/MM/YYYY') : ""}</Form.Label>
                                 <Form.Label column sm="2">Partido:</Form.Label>
                                 <Form.Label column sm="10">{siglaPartido ? siglaPartido : ""}</Form.Label>
                             </Col>
@@ -86,17 +78,12 @@ export default class ModalDeputadoDetalhe extends Component {
 
                         <Form.Group as={Row}>
                             <Col sm="12">
-                                {detalhesDespesas &&
-                                    <DespesasDetalhadas
-                                        despesas={despesas}
-                                        onHide={naoMostrarDetalhe}
-                                    />}
-                                {!detalhesDespesas &&
-                                    <DespesasAgrupadas
-                                        despesas={despesas}
-                                        total={total}
-                                        onHide={mostrarDetalhe}
-                                    />}
+                                <DespesasAgrupadas
+                                    despesas={despesas}
+                                    total={total}
+                                    onHide={mostrarDetalhe}
+                                    deputadoId={deputadoId}
+                                />
                             </Col>
                         </Form.Group>
                     </Form>

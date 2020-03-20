@@ -2,6 +2,7 @@ package com.desafio.vibe.desafio.api;
 
 import com.desafio.vibe.desafio.api.recursos.RecursoDeputado;
 import com.desafio.vibe.desafio.api.recursos.RecursoDeputadoDetalhe;
+import com.desafio.vibe.desafio.api.recursos.RecursoDespesa;
 import com.desafio.vibe.desafio.dominio.servicos.ServicoDeputados;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class DeputadosController {
     @GetMapping("/detalhe")
     public ResponseEntity<RecursoDeputadoDetalhe> getDetalheDeputado(@RequestParam(value = "deputadoId") String deputadoId, @RequestParam(value = "detalhada") boolean detalhada) {
         return new ResponseEntity<>(servico.obterDetalhesDeputado(deputadoId, detalhada), HttpStatus.OK);
+    }
+
+    @GetMapping("/mes")
+    public ResponseEntity<List<RecursoDespesa>> getDetalheMes(@RequestParam(value = "deputadoId") String deputadoId, @RequestParam(value = "mes") String mes) {
+        return new ResponseEntity<>(servico.obterDetalhesMes(deputadoId, mes), HttpStatus.OK);
     }
 
 

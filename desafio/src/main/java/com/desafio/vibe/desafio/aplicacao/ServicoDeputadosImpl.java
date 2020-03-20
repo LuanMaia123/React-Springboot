@@ -3,6 +3,7 @@ package com.desafio.vibe.desafio.aplicacao;
 import com.desafio.vibe.desafio.api.recursos.*;
 import com.desafio.vibe.desafio.dominio.Visualizacoes;
 import com.desafio.vibe.desafio.dominio.dados.RepositorioVisualizacoes;
+import com.desafio.vibe.desafio.dominio.enums.Mes;
 import com.desafio.vibe.desafio.dominio.servicos.ServicoDeputados;
 import com.desafio.vibe.desafio.util.Response;
 import com.desafio.vibe.desafio.util.VariaveisAplicacao;
@@ -31,15 +32,13 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
 
     private VariaveisAplicacao variaveisAplicacao;
 
-    private final String ORDENACAO_ASC = "ASC";
-    private final String ORDENACAO_DESC = "DESC";
+    private static final String ORDENACAO_ASC = "ASC";
+    private static final String ORDENACAO_DESC = "DESC";
 
     @Override
     public List<RecursoDeputado> obterTodosDeputados(Integer paginaAtual, Integer itensPorPagina) {
-
         List<RecursoDeputado> deputadoList = new ArrayList<>();
         UriComponentsBuilder builder = getUriComponentsBuilderDeputados(paginaAtual, itensPorPagina);
-
         RecursosDeputados recursosDeputados = response.requestParamsBuilder(builder, RecursosDeputados.class);
         if (recursosDeputados != null) {
             deputadoList = recursosDeputados.getDados();
@@ -50,7 +49,7 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
     }
 
     private UriComponentsBuilder getUriComponentsBuilderDeputados(Integer paginaAtual, Integer itensPorPagina) {
-        return UriComponentsBuilder.fromHttpUrl("https://dadosabertos.camara.leg.br/api/v2/deputados")
+        return UriComponentsBuilder.fromHttpUrl(variaveisAplicacao.getUrlDeputados())
                 .queryParam("pagina", paginaAtual)
                 .queryParam("itens", itensPorPagina)
                 .queryParam("ordem", ORDENACAO_ASC);
@@ -61,6 +60,12 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
             Visualizacoes visualizacoesPorParlamentar = repositorioVisualizacoes.getVisualizacoesPorParlamentar(Long.valueOf(d.getId()));
             d.setVisualizacoes(visualizacoesPorParlamentar != null ? visualizacoesPorParlamentar.getVisualizacoes() : 0);
         });
+    }
+
+    public List<RecursoDespesa> obterDetalhesMes(String deputadoId, String mes) {
+        Map<String, String> urlParamsd = getUrlParamsMap(deputadoId);
+        RecursoDadosDespesa recursoDespesa = responseDespesa.requestParamsBuilder(urlParamsd, getPathParamsBuilderMes(mes), RecursoDadosDespesa.class);
+        return recursoDespesa.getDespesas();
     }
 
     public RecursoDeputadoDetalhe obterDetalhesDeputado(String deputadoId, boolean detalhada) {
@@ -77,6 +82,10 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
                 if (!detalhada) {
                     recursoDeputadoDetalhe.setDespesas(agruparDespesas(recursoDespesa));
                 } else {
+                    recursoDespesa.getDespesas().stream().forEach(d -> {
+                        Mes mes = Mes.recuperarStatusPeloCodigo(d.mes);
+                        d.setMesNome(mes != null ? mes.getDescricao() : "");
+                    });
                     recursoDeputadoDetalhe.setDespesas(recursoDespesa.getDespesas());
                 }
 
@@ -91,6 +100,14 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
                 .queryParam("ano", getAnoAtual())
                 .queryParam("mes", getMesAtual())
                 .queryParam("mes", getMesAnterior())
+                .queryParam("ordem", ORDENACAO_DESC)
+                .queryParam("ordenarPor", "dataDocumento");
+    }
+
+    private UriComponentsBuilder getPathParamsBuilderMes(String mes) {
+        return UriComponentsBuilder.fromHttpUrl(variaveisAplicacao.getUrlDespesas())
+                .queryParam("ano", getAnoAtual())
+                .queryParam("mes", mes)
                 .queryParam("ordem", ORDENACAO_DESC)
                 .queryParam("ordenarPor", "dataDocumento");
     }
@@ -121,7 +138,10 @@ public class ServicoDeputadosImpl implements ServicoDeputados {
         List<RecursoDespesa> recursos = new ArrayList<>();
         for (Map.Entry<RecursoDespesa, Integer> entry : collect.entrySet()) {
             RecursoDespesa recurso = new RecursoDespesa();
-            recurso.setMes(entry.getKey().mes);
+            Integer mes = entry.getKey().mes;
+            recurso.setMes(mes);
+            Mes mesEnum = Mes.recuperarStatusPeloCodigo(mes);
+            recurso.setMesNome(mesEnum != null ? mesEnum.getDescricao() : "");
             recurso.setValorLiquido(Double.valueOf(entry.getValue()));
             recursos.add(recurso);
         }

@@ -13,7 +13,7 @@ public class VariaveisAplicacao {
 
     private Environment env;
 
-    public String getConfigValue(String configKey) {
+    private String getConfigValue(String configKey) {
         return env.getProperty(configKey);
     }
 
