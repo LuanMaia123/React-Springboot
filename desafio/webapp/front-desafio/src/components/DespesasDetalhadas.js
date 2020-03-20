@@ -21,19 +21,6 @@ export default class DespesasDetalhadas extends Component {
         this.obterDetalheDespesa(this.state.deputadoId, this.state.mes);
     }
 
-    // obterDetalheDespesa = async (id, mes) => {
-    //     let res = await axios.get("http://localhost:8080/rest/deputados/mes", {
-    //         params: {
-    //             deputadoId: id,
-    //             mes: mes
-    //         }
-    //     })
-    //     let { data } = res.data;
-    //     this.setState({
-    //         despesas: data.despesas
-    //     })
-    // };
-
     obterDetalheDespesa(id, mes) {
         axios.get("http://localhost:8080/rest/deputados/mes", {
             params: {
@@ -59,7 +46,7 @@ export default class DespesasDetalhadas extends Component {
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Detalhes do parlamentar
+                        Detalhes das despesas
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

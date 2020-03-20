@@ -4,7 +4,6 @@ import { Card, Table, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import DespesasDetalhadas from './DespesasDetalhadas';
-import axios from 'axios';
 
 
 export default class DespesasAgrupadas extends Component {
