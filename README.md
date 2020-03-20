@@ -44,4 +44,4 @@ O que poderia ter sido feito a mais:
 - Migrations para criação da tabela de visualizações.
 - Testes Unitários
 - Usado redux para controle de estado
-- Melhorar a interface
+- Melhorar a interface e load entre carregamentos
