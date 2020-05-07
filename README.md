@@ -1,5 +1,3 @@
-# Desafio vibe tecnologia
-
 ### Tecnologias ultilizadas
 - Spring Boot 2
 - Project Lombok
